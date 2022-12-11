@@ -6,18 +6,18 @@ year, day = 2022, 9
 puzzle_input = load(year, day)
 lines = puzzle_input.splitlines()
 # lines = """
-# R 5
-# U 8
-# L 8
-# D 3
-# R 17
-# D 10
-# L 25
-# U 20
+# R 4
+# U 4
+# L 3
+# D 1
+# R 4
+# D 1
+# L 5
+# R 2
 # """.splitlines()
 
 tail_visited = set()
-rope_length = 10
+rope_length = 2
 rope = [(0,0)] * rope_length
 
 for line in lines:
