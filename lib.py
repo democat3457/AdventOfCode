@@ -1,6 +1,13 @@
-import requests
-import pyperclip
+import math
+import re
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable, Dict, List
+
+import numpy as np
+import pyperclip
+import requests
+
 
 def load(year, day):
     input_path = Path(f"./inputs/{year}_{day:02}.txt").resolve()
