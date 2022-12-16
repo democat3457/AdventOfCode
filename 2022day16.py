@@ -44,7 +44,7 @@ for line in lines:
         id, flow, tunnels = re.search("Valve (..) has flow rate=(\d+); tunnels? leads? to valves? (.+)", line).groups()
         valve = Valve(id, int(flow), tunnels.split(", "))
         valves[id] = valve
-        if start_valve is None:
+        if id == "AA":
             start_valve = valve
         if int(flow) != 0:
             good_valves.append(valve)
