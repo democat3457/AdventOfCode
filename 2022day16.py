@@ -55,7 +55,7 @@ for valve in ([start_valve] + good_valves):
     queue = list(map(tuple, zip(valve.tunnels.copy(), itertools.repeat(1))))
     visited = []
     atv = target_valves.copy()
-    s = ""
+    # s = ""
     while len(atv) and len(queue):
         q, d = queue.pop(0)
         visited.append(q)
@@ -63,24 +63,27 @@ for valve in ([start_valve] + good_valves):
         if v in atv:
             atv.remove(v)
             good_valve_paths[(valve.id, v.id)] = d
-            s += f"\t{valve.id}({valve.flow}), {v.id}({v.flow}) -> {d}"
+            # s += f"\t{valve.id}({valve.flow}), {v.id}({v.flow}) -> {d}"
         for tunnel_id in v.tunnels:
             if tunnel_id not in visited:
                 queue.append((tunnel_id, d+1))
-    print(s)
+    # print(s)
 
 @dataclass
 class Route:
     nodes: List[str]
     remaining_good_valves: List[str] = dataclasses.field(default_factory=lambda: list(map(lambda x: x.id, good_valves)))
     score: int = 0
-    minutes_remaining: int = 30
+    minutes_remaining: int = 26
 
     @property
     def last_node(self):
         return self.nodes[-1]
+    
+    @property
+    def nodes_set(self):
+        return set(self.nodes[1:])
 
-max_score = 0
 
 current_valve = start_valve
 queue = [Route([start_valve.id])]
@@ -105,17 +108,30 @@ while len(queue):
     if not added:
         # End of route
         final_routes.append(route)
-        if route.score > max_score:
-            max_score = route.score
 
 final_routes.sort(key=lambda x: x.score, reverse=True)
-for fr in final_routes[:5]:
-    s = fr.nodes[0]
-    mr = 30
-    for a, b in itertools.pairwise(fr.nodes):
-        key = (a, b) if (a, b) in good_valve_paths else (b, a)
-        dist = good_valve_paths[key]
-        mr -= dist + 1
-        s += f" {dist} +1\t{b}({mr*valves[b].flow})"
-    print(f'{fr.score}(0) rem{fr.minutes_remaining}\t{s}')
+# for fr in final_routes[:5]:
+#     s = fr.nodes[0]
+#     mr = 26
+#     for a, b in itertools.pairwise(fr.nodes):
+#         key = (a, b) if (a, b) in good_valve_paths else (b, a)
+#         dist = good_valve_paths[key]
+#         mr -= dist + 1
+#         s += f" {dist} +1\t{b}"
+#     print(f'{fr.score} rem{fr.minutes_remaining}\t{s}')
+
+max_pair = None
+max_score = 0
+
+print(f"{len(final_routes)} routes")
+
+for a, b in tqdm(itertools.combinations(final_routes, 2), total=(len((final_routes)*(len(final_routes)-1))//2)):
+    if len(a.nodes_set.intersection(b.nodes_set)):
+        continue
+
+    if (s := (a.score + b.score)) > max_score:
+        max_score = s
+        max_pair = (a, b)
+
+print(max_pair)
 ans(max_score)
