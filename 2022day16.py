@@ -55,6 +55,7 @@ for valve in ([start_valve] + good_valves):
     queue = list(map(tuple, zip(valve.tunnels.copy(), itertools.repeat(1))))
     visited = []
     atv = target_valves.copy()
+    s = ""
     while len(atv) and len(queue):
         q, d = queue.pop(0)
         visited.append(q)
@@ -62,9 +63,11 @@ for valve in ([start_valve] + good_valves):
         if v in atv:
             atv.remove(v)
             good_valve_paths[(valve.id, v.id)] = d
+            s += f"\t{valve.id}({valve.flow}), {v.id}({v.flow}) -> {d}"
         for tunnel_id in v.tunnels:
             if tunnel_id not in visited:
                 queue.append((tunnel_id, d+1))
+    print(s)
 
 @dataclass
 class Route:
@@ -108,9 +111,11 @@ while len(queue):
 final_routes.sort(key=lambda x: x.score, reverse=True)
 for fr in final_routes[:5]:
     s = fr.nodes[0]
+    mr = 30
     for a, b in itertools.pairwise(fr.nodes):
         key = (a, b) if (a, b) in good_valve_paths else (b, a)
         dist = good_valve_paths[key]
-        s += f" {dist} +1\t{b}"
-    print(f'{fr.score}\t{s}\trem: {fr.minutes_remaining}')
+        mr -= dist + 1
+        s += f" {dist} +1\t{b}({mr*valves[b].flow})"
+    print(f'{fr.score}(0) rem{fr.minutes_remaining}\t{s}')
 ans(max_score)
