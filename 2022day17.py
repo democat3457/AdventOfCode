@@ -188,12 +188,18 @@ class Block:
         cls.index %= len(cls.types)
         return t
 
-grid = np.array([
-    [1,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1],
-])
+grid = np.array([0])
+
+def reset_grid():
+    global grid
+    grid = np.array([
+        [1,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1],
+    ])
+
+reset_grid()
 
 def get_highest_coord():
     for i in range(grid.shape[0]):
@@ -204,8 +210,22 @@ def get_highest_coord():
 def add_row():
     global grid
     grid = np.vstack(((1,0,0,0,0,0,0,0,1), grid))
+    # if grid.shape[0] > 200:
+    #     grid = grid[:200]
 
-for i in tqdm(range(1000000000000), total=1000000000000):
+def get_height():
+    return grid.shape[0]-get_highest_coord()-1
+
+def make_key():
+    return np.array2string(grid[:30], separator='')+f'_{Block.index}_{jet_index}'
+
+key_to_match = None
+matched_index_height = (0,0)
+# mod = len(jets)*len(Block.types)
+
+def drop_block():
+    global jet_index, grid
+
     t = Block.next_type()
     bh = t.grid.shape[0]
     c = get_highest_coord()
@@ -234,4 +254,30 @@ for i in tqdm(range(1000000000000), total=1000000000000):
     
     block.add_to_grid()
 
-ans(grid.shape[0]-get_highest_coord()-1)
+for i in tqdm(range(200000)):
+    if i % 5 == 0 and i >= 200:
+        if key_to_match is None:
+            key_to_match = make_key()
+            matched_index_height = (i, get_height())
+        else:
+            key = make_key()
+            if key == key_to_match:
+                print(key)
+                print(f'Matched {matched_index_height} with {(i, get_height())}')
+                break
+    drop_block()
+
+cycle_iter = i-matched_index_height[0]
+cycle_height = get_height()-matched_index_height[1]
+print(f'Cycles every {cycle_iter} iterations with {cycle_height} height')
+
+d, m = divmod(1000000000000, cycle_iter)
+
+Block.index = 0
+jet_index = 0
+reset_grid()
+
+for i in tqdm(range(cycle_iter+m)):
+    drop_block()
+
+ans((d-1)*cycle_height + get_height())
