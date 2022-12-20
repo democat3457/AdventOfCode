@@ -15,8 +15,6 @@ lines = puzzle_input.splitlines()
 # 4
 # """.splitlines()
 
-total = 0
-
 orders = []
 
 for i in range(len(lines)):
@@ -24,19 +22,14 @@ for i in range(len(lines)):
     if line:
         orders.append((len(orders), int(line)*811589153))
 
-print(orders)
 total_length = len(orders)
-for _ in range(10):
+for _ in tqdm(range(10)):
     for i in range(total_length):
         for j in range(total_length):
             if orders[j][0] == i:
                 item = orders.pop(j)
-                index = (j+item[1])
-                orders.insert(index%(total_length-1),item)
-                # print(orders)
+                orders.insert((j+item[1]) % (total_length-1), item)
                 break
-    # print(orders)
-# print(orders)
 
-zero = [i for i, order in enumerate(orders) if order[1] == 0][0]
-ans(orders[(zero+1000)%total_length][1]+orders[(zero+2000)%total_length][1]+orders[(zero+3000)%total_length][1])
+zero_index = [i for i, order in enumerate(orders) if order[1] == 0][0]
+ans(orders[(zero_index+1000)%total_length][1]+orders[(zero_index+2000)%total_length][1]+orders[(zero_index+3000)%total_length][1])
