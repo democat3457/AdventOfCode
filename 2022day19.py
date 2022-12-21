@@ -4,11 +4,11 @@ from dataclasses import field
 year, day = 2022, 19
 
 puzzle_input = load(year, day)
-# lines = puzzle_input.splitlines()
-lines = """
-Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
-Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.
-""".splitlines()
+lines = puzzle_input.splitlines()
+# lines = """
+# Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
+# Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.
+# """.splitlines()
 
 @dataclass
 class Blueprint:
@@ -17,6 +17,7 @@ class Blueprint:
     clay_cost: int
     obsidian_cost: Tuple[int, int]
     geode_cost: Tuple[int, int]
+    line: str
 
 @dataclass
 class OCOG:
@@ -40,12 +41,13 @@ total = 0
 for line in lines:
     if line:
         groups = tuple(map(int, re.findall('(\d+)', line)))
-        bps.append(Blueprint(groups[0], groups[1], groups[2], (groups[3], groups[4]), (groups[5], groups[6])))
+        bps.append(Blueprint(groups[0], groups[1], groups[2], (groups[3], groups[4]), (groups[5], groups[6]), line))
 
 for bp in bps:
     robots = OCOG(1)
     raw = OCOG()
     next_target = ''
+    print(bp.line)
     for minute in range(1, 25):
         print(f"=== Minute {minute} ===")
         bought = False
@@ -94,7 +96,7 @@ for bp in bps:
         print(f'{robots} robots and {raw} resources')
 
         # valuable overrides
-        if raw.ore+1 >= bp.geode_cost[0] and raw.obsidian+1 >= bp.geode_cost[1]:
+        if raw.ore >= bp.geode_cost[0] and raw.obsidian >= bp.geode_cost[1]:
             next_target = 'geode'
             print('Overriden next target to geode')
         # elif raw.ore+1 >= bp.obsidian_cost[0] and raw.clay+1 >= bp.obsidian_cost[1]:
@@ -123,11 +125,15 @@ for bp in bps:
                         return 'ore'
                 if time_till.clay <= time_till.ore:
                     time_till_ob_modified = max(math.ceil(max(0,bp.obsidian_cost[0]-(raw.ore - bp.clay_cost))/robots.ore), math.ceil(max(0,bp.obsidian_cost[1]-raw.clay)/(robots.clay+1)))
-                    if time_till_ob_modified < time_till.obsidian:
-                        return 'clay'
+                    if time_till_ob_modified <= time_till.obsidian:
+                        if robots.obsidian == 0:
+                            return 'clay'
+                        time_till_ge_modified = max(math.ceil(max(0,bp.geode_cost[0]-(raw.ore - bp.clay_cost))/robots.ore), math.ceil(max(0,bp.geode_cost[1]-raw.obsidian)/(robots.obsidian)))
+                        if time_till_ge_modified <= time_till.geode:
+                            return 'clay'
                 if time_till.obsidian < 10000:
                     time_till_ge_modified = max(math.ceil(max(0,bp.geode_cost[0]-(raw.ore - bp.obsidian_cost[0]))/robots.ore), math.ceil(max(0,bp.geode_cost[1]-raw.obsidian)/(robots.obsidian+1)))
-                    if time_till_ge_modified < time_till.geode:
+                    if time_till_ge_modified <= time_till.geode:
                         return 'obsidian'
                 if time_till.geode < 10000:
                     # if time_till.geode < time_till.obsidian:
