@@ -4,22 +4,22 @@ year, day = 2022, 22
 
 puzzle_input = load(year, day)
 lines = puzzle_input.splitlines()
-lines = \
-"""        ...#    
-        .#..
-        #...
-        ....
-...#.......#
-........#...
-..#....#....
-..........#.
-        ...#....
-        .....#..
-        .#......
-        ......#.
+# lines = \
+# """        ...#    
+#         .#..
+#         #...
+#         ....
+# ...#.......#
+# ........#...
+# ..#....#....
+# ..........#.
+#         ...#....
+#         .....#..
+#         .#......
+#         ......#.
 
-10R5L5R10L4R5L5R2
-""".splitlines()
+# 10R5L5R10L4R7L2R2
+# """.splitlines()
 
 grid: List[List[str]] = []
 directions: List[str|int] = []
@@ -115,25 +115,25 @@ for dir in tqdm(directions):
             f.write(f'Facing is now {facing}\n')
         continue
 
-    new_facing = facing
     for _ in range(dir):
-        facing = new_facing
+        new_facing = facing
         query = tuple(map(operator.add, position, facing_map[facing]))
         with open('log.txt', 'a') as f:
-            f.write(f'q{query} nf:{new_facing}\n')
+            f.write(f'q{query} f:{facing}\n')
         found = False
-        while not found:
-            if 0 <= query[0] < grid_height and 0 <= query[1] < grid_width:
-                g = grid[query[0]][query[1]]
-                if g != ' ':
-                    found = True
-                    break
-            query, new_facing = example_lookup[tuple(query)+(facing,)]
-            # query, new_facing = actual_lookup[tuple(query)+(facing,)]
+        if 0 <= query[0] < grid_height and 0 <= query[1] < grid_width:
+            g = grid[query[0]][query[1]]
+            if g != ' ':
+                found = True
+        if not found:
+            # query, new_facing = example_lookup[tuple(query)+(facing,)]
+            query, new_facing = actual_lookup[tuple(query)+(facing,)]
+            g = grid[query[0]][query[1]]
         if g == '#':
             break
         
         # g is .
+        facing = new_facing
         position = tuple(query)
         # print(position)
 
