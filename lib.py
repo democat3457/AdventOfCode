@@ -30,6 +30,9 @@ def load(year, day):
 
     return p_in
 
+def vec_add(t0: Tuple, t1: Tuple):
+    return (t0[0]+t1[0], t0[1]+t1[1])
+
 def ans(answer):
     print(answer)
     pyperclip.copy(str(answer))
