@@ -36,9 +36,11 @@ class OCOG:
         return OCOG(self.ore, self.clay, self.obsidian, self.geode)
 
 bps: List[Blueprint] = []
-total = 0
+total = 1
 
-for line in lines:
+lns = [l for l in lines if l]
+
+for line in lns[:min(3, len(lns))]:
     if line:
         groups = tuple(map(int, re.findall('(\d+)', line)))
         bps.append(Blueprint(groups[0], groups[1], groups[2], (groups[3], groups[4]), (groups[5], groups[6]), line))
@@ -168,6 +170,8 @@ for bp in bps:
     queue: List[Route] = [Route()]
     max_geodes = 0
 
+    max_ore_cost = max(bp.clay_cost, bp.obsidian_cost[0], bp.geode_cost[0])
+
     # tq = tqdm([])
     it = 0
     try:
@@ -221,20 +225,29 @@ for bp in bps:
             # tq.update()
             # tq.set_description(str(max_geodes)+'_'+str(len(queue)))
 
-            if route.minute > 24:
+            if route.minute > 32:
                 if route.raw.geode > max_geodes:
                     max_geodes = route.raw.geode
                 queue.pop(0)
                 continue
+
+            m = 33 - route.minute
+            # is it even possible to exceed the max from here?
+            if (route.raw.geode + (route.robots.geode * m + m * (m-1) // 2)) <= max_geodes:
+                queue.pop(0)
+                continue
             
             # Find next target robot
-            if route.minute < 24 and not route.next_target:
+            if route.minute < 32 and not route.next_target:
                 queue.pop(0)
-                if route.minute < 22:
-                    queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'ore', route.minute))
-                    queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'clay', route.minute))
-                if route.minute < 23 and route.robots.clay > 0:
-                    queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'obsidian', route.minute))
+                if route.minute < 30:
+                    if route.robots.ore < max_ore_cost:
+                        queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'ore', route.minute))
+                    if route.robots.clay < bp.obsidian_cost[1]:
+                        queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'clay', route.minute))
+                if route.minute < 31 and route.robots.clay > 0:
+                    if route.robots.obsidian < bp.geode_cost[1]:
+                        queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'obsidian', route.minute))
                 if route.robots.obsidian > 0:
                     queue.insert(0, Route(route.robots.copy(), route.raw.copy(), 'geode', route.minute))
     except KeyboardInterrupt:
@@ -242,7 +255,7 @@ for bp in bps:
         print(route)
 
 
-    total += bp.id * max_geodes
+    total *= max_geodes
     print(bp.id, max_geodes)
 
 ans(total)
