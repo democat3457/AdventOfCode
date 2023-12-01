@@ -1,6 +1,6 @@
 from lib import *
 
-year, day = 2022, 1
+year, day = 2023, 1
 
 puzzle_input = load(year, day)
 lines = puzzle_input.splitlines()
