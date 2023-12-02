@@ -11,6 +11,8 @@ import pyperclip
 import requests
 from tqdm import tqdm
 
+from coords import Vec2D, Coor, interp_coords
+
 
 def load(year, day):
     input_path = Path(f"./inputs/{year}_{day:02}.txt").resolve()
