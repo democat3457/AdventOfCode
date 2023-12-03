@@ -1,6 +1,4 @@
-from collections import defaultdict
 from lib import *
-import re
 
 year, day = 2023, 3
 
@@ -24,9 +22,7 @@ grid = [line for line in lines if line]
 gears = defaultdict(list)
 
 def get_at(i: int, j: int):
-    if 0 <= i < len(grid) and 0 <= j < len(grid[0]):
-        return grid[i][j]
-    return ' '
+    return get_element_in_arrays(grid, (i,j), ' ')
 
 def any_symbols_adjacent(i: int, j: int):
     l = [get_at(i+m,j+n) not in ' .1234567890' for m in (-1,0,1) for n in (-1,0,1)]

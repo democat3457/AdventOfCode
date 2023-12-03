@@ -1,8 +1,9 @@
 import math
 import re
-from dataclasses import dataclass
+from collections import defaultdict, deque
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Tuple
 
 import itertools
 import numpy as np
@@ -31,6 +32,14 @@ def load(year, day):
         input_path.write_text(p_in)
 
     return p_in
+
+def get_element_in_arrays(array: Any, indices: Iterable[int], default: Any):
+    for idx in indices:
+        if 0 <= idx < len(array):
+            array = array[idx]
+        else:
+            return default
+    return array
 
 def vec_add(t0: Tuple, t1: Tuple):
     return (t0[0]+t1[0], t0[1]+t1[1])
