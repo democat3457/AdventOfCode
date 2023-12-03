@@ -17,7 +17,7 @@ lines = puzzle_input.splitlines()
 # .664.598..
 # """.splitlines()
 
-grid = [line for line in lines if line]
+grid = truthy_list(lines)
 
 gears = defaultdict(list)
 

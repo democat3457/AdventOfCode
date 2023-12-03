@@ -3,7 +3,7 @@ import re
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
 
 import itertools
 import numpy as np
@@ -40,6 +40,11 @@ def get_element_in_arrays(array: Any, indices: Iterable[int], default: Any):
         else:
             return default
     return array
+
+T = TypeVar('T')
+
+def truthy_list(array: Iterable[T]) -> List[T]:
+    return [a for a in array if a]
 
 def vec_add(t0: Tuple, t1: Tuple):
     return (t0[0]+t1[0], t0[1]+t1[1])
