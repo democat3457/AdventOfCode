@@ -1,5 +1,4 @@
 from lib import *
-import astar
 
 year, day = 2022, 12
 

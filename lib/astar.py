@@ -3,6 +3,8 @@
 from warnings import warn
 import heapq
 
+__all__ = ["Node", "astar"]
+
 class Node:
     """
     A node class for A* Pathfinding

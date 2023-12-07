@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
 
+import functools
 import itertools
 import numpy as np
 import operator
@@ -12,7 +13,8 @@ import pyperclip
 import requests
 from tqdm import tqdm
 
-from coords import Vec2D, Coor, interp_coords
+from . import astar
+from .coords import *
 
 
 def load(year, day):
