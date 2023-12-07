@@ -3,3 +3,6 @@ rust_aoc/target/
 
 inputs/
 .session
+
+.vscode/*
+!.vscode/launch.json
