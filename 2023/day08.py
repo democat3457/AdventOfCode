@@ -67,8 +67,6 @@ while any(c == -1 for c in actual_cycle_count):
 print(actual_cycle_count)
 print(start)
 
-lcm = 1
-for i in actual_cycle_count:
-    lcm = lcm*i // math.gcd(lcm, i)
+lcm = math.lcm(*actual_cycle_count)
 
 ans(lcm)
