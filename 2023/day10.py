@@ -111,5 +111,12 @@ for i, line in enumerate(lines):
             # print('after ', inside, f, c)
 
 
-Path('out.txt').write_text('\n'.join(lines))
+out_lines = copy.deepcopy(lines)
+for i, line in enumerate(out_lines):
+    for j, c in enumerate(line):
+        if in_loop[i][j]:
+            oj = out_lines[i]
+            out_lines[i] = oj[:j] + 'O' + oj[j+1:]
+
+Path('out.txt').write_text('\n'.join(out_lines))
 ans(total)
