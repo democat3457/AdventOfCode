@@ -52,12 +52,22 @@ prev_pos = s_pos
 pos = proc(None, s_pos)
 in_loop[s_pos[0]][s_pos[1]] = True
 total_len = 1
+start_edges = [(pos[0]-s_pos[0],pos[1]-s_pos[1])]
+
 while pos != s_pos:
     old_pos = pos
     pos = proc(prev_pos, pos)
     prev_pos = old_pos
     in_loop[prev_pos[0]][prev_pos[1]] = True
     total_len += 1
+
+start_edges.append((prev_pos[0]-s_pos[0],prev_pos[1]-s_pos[1]))
+start_char = [k for k, v in chars.items() if set(v) == set(start_edges)][0]
+# print(start_char)
+
+# replace S with computed start char
+start_line = lines[s_pos[0]]
+lines[s_pos[0]] = start_line[:s_pos[1]] + start_char + start_line[s_pos[1]+1:]
 
 # Part 01
 # ans(total_len//2)
@@ -74,49 +84,28 @@ for i, line in enumerate(lines):
         if not in_loop[i][j]:
             if inside:
                 total += 1
-                # print(i,j)
         else:
-            # print('before ', inside, f, c)
             match c:
-                # case '.':
-                #     if inside:
-                #         total += 1
-                #     break
                 case '|':
                     inside = not inside
-                    # break
                 case '-':
-                    # break
                     pass
-                case 'L':
+                case 'L' | 'F':
                     f = c
-                case 'F':
-                    f = c
-                    # break
-                case '7':
-                    if f == 'L':
+                case '7' | 'J':
+                    if f+c in ('L7', 'FJ'):
                         inside = not inside
                     f = ''
-                    # break
-                case 'J':
-                    if f == 'F':
-                        inside = not inside
-                    f = ''
-                    # break
-                case 'S':
-                    # hardcode
-                    inside = not inside
                 case _:
                     pass
-            # print('after ', inside, f, c)
 
-
+# visualization
 out_lines = copy.deepcopy(lines)
 for i, line in enumerate(out_lines):
     for j, c in enumerate(line):
         if in_loop[i][j]:
             oj = out_lines[i]
             out_lines[i] = oj[:j] + 'O' + oj[j+1:]
-
 Path('out.txt').write_text('\n'.join(out_lines))
+
 ans(total)
