@@ -110,6 +110,12 @@ class Vector2D(Generic[T]):
 
         return self.__class__(self._type_T(self.x / xval), self._type_T(self.y / yval))
 
+    def __abs__(self):
+        return self.__class__(self._type_T(abs(self.x)), self._type_T(abs(self.y)))
+
+    def __neg__(self):
+        return self.__class__(self._type_T(-self.x), self._type_T(-self.y))
+
     def __str__(self):
         return f"({self.x}, {self.y})"
 
