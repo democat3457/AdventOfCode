@@ -13,7 +13,7 @@ lines = puzzle_input.splitlines()
 # ?###???????? 3,2,1
 # """.splitlines()
 
-# Part 01
+# Original Part 01
 # total = 0
 # m = 0
 
@@ -42,6 +42,7 @@ lines = puzzle_input.splitlines()
 #         total += tmptotal
 
 # ans(total)
+# quit()
 
 find_cache: dict[tuple[int, str, str], int] = {}
 
@@ -78,6 +79,8 @@ for line in tqdm(lines):
     if line:
         _s, _groups = line.split()
         _groups = tuple(map(int, _groups.split(',')))
+        # New Part 01
+        # s, groups = _s, _groups
         s = '?'.join([_s] * 5)
         groups = _groups * 5
         hashtags = [('#'*g + '.') for g in groups]
