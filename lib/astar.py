@@ -107,12 +107,12 @@ def astar(maze, start, end, allow_diagonal_movement = False):
                 continue
 
             # Make sure walkable terrain
-            if ord(maze[node_position[0]][node_position[1]]) > (current_value + 1):
-                # print(f'unwalkable {ord(maze[node_position[0]][node_position[1]])} > {current_value + 1}')
-                continue
+            # if ord(maze[node_position[0]][node_position[1]]) > (current_value + 1):
+            #     # print(f'unwalkable {ord(maze[node_position[0]][node_position[1]])} > {current_value + 1}')
+            #     continue
 
-            if node_position == (17, 68) or node_position == (16, 87):
-                continue
+            # if node_position == (17, 68) or node_position == (16, 87):
+            #     continue
 
             # Create new node
             new_node = Node(current_node, node_position)

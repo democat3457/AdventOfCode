@@ -118,6 +118,9 @@ class Vector2D(Generic[T]):
 
     def __str__(self):
         return f"({self.x}, {self.y})"
+    
+    def __eq__(self, other: Vector2D):
+        return self.x == other.x and self.y == other.y
 
 @dataclass
 class Vec2D(Vector2D[float]):
