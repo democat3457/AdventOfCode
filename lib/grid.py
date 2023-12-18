@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
-from typing import Any, Generic, Iterable, TypeVar
+from typing import Generic, Iterable, TypeVar
 
 from .coords import Coor
 
