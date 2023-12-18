@@ -17,6 +17,7 @@ from tqdm import tqdm
 
 from . import astar
 from .coords import *
+from .grid import *
 
 
 def load(year, day):
