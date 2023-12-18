@@ -25,6 +25,19 @@ lines = puzzle_input.splitlines()
 # 112999
 # 911111
 # """.splitlines()
+# lines = """
+# 111111111111
+# 999999999991
+# 999999999991
+# 999999999991
+# 999999999991
+# """.splitlines()
+
+h_mult = 0.05
+
+# Part 01
+# straight_min, straight_max = 0, 3
+straight_min, straight_max = 4, 10
 
 maze = truthy_list(lines)
 
@@ -38,7 +51,7 @@ end_node = Node(None, end)
 end_node.g = end_node.h = end_node.f = 0
 
 # Initialize both open and closed list
-open_list: list[Node] = []
+open_list: list[Node[Coor]] = []
 closed_list: set[tuple[tuple[int, int], tuple[int,int], float]] = set()
 
 # Heapify the open_list and Add the start node
@@ -46,8 +59,6 @@ heapq.heapify(open_list)
 heapq.heappush(open_list, start_node)
 
 # Adding a stop condition
-outer_iterations = 0
-max_iterations = (len(maze[0]) * len(maze) * 300)
 print(len(maze) * len(maze[0]))
 
 # what squares do we search
@@ -58,14 +69,7 @@ t = tqdm([])
 try:
     # Loop until you find the end
     while len(open_list) > 0:
-        outer_iterations += 1
         t.update()
-
-        # if outer_iterations > max_iterations:
-        #     # if we hit this point return the path such as it is
-        #     # it will not contain the destination
-        #     print("giving up on pathfinding too many iterations")
-        #     quit()     
 
         # Get the current node
         current_node = heapq.heappop(open_list)
@@ -75,14 +79,12 @@ try:
         closed_list.add(closed_key)
 
         # Found the goal
-        if current_node == end_node:
+        if current_node == end_node and current_node.h >= h_mult * straight_min:
             break
 
         # Generate children
         children: list[Node] = []
 
-        # heat_value = int(maze[current_node.position.x][current_node.position.y])
-        
         for new_position in adjacent_squares: # Adjacent squares
 
             # Get node position
@@ -90,30 +92,28 @@ try:
 
             if current_node.parent is not None and node_position == current_node.parent.position:
                 continue
+            previous_direction: tuple[int,int] | None = (current_node.position - current_node.parent.position).tup if current_node.parent is not None else None
             temp_node = current_node
-            for straight_amnt in range(3):
+            for straight_amnt in range(straight_max + 1):
                 if temp_node.parent is None:
                     break
-                if (temp_node.position - temp_node.parent.position).tup != new_position:
+                if (temp_node.position - temp_node.parent.position).tup != previous_direction:
                     break
                 temp_node = temp_node.parent
-            else:
+
+            if previous_direction is not None and straight_amnt < straight_min and new_position != previous_direction: # haven't gone required straight distance yet
                 continue
+            if previous_direction is not None and straight_amnt >= straight_max and previous_direction == new_position: # have gone maximum straight distance
+                continue
+            if previous_direction is not None and new_position != previous_direction: # turning, reset straight amnt
+                straight_amnt = 0
 
             # Make sure within range
             if not (0 <= node_position.x < len(maze) and 0 <= node_position.y < len(maze[0])):
                 # print('out range')
                 continue
 
-            # Make sure walkable terrain
-            # if ord(maze[node_position[0]][node_position[1]]) > (current_value + 1):
-            #     # print(f'unwalkable {ord(maze[node_position[0]][node_position[1]])} > {current_value + 1}')
-            #     continue
-
-            # if node_position == (17, 68) or node_position == (16, 87):
-            #     continue
-
-            new_h = 0.2 * (straight_amnt + 1)
+            new_h = h_mult * (straight_amnt + 1)
 
             if (node_position.tup, new_position, new_h) in closed_list:
                 continue
@@ -130,41 +130,11 @@ try:
 
         # Loop through children
         for child in children:
-            # Child is on the closed list
-            # if any(closed_child == child for closed_child in closed_list):
-            #     continue
 
             # Create the f, g, and h values
             child.g = current_node.g + int(maze[child.position.x][child.position.y])
-            # child.h = 0.1*((((child.position.x - end_node.position.x) ** 2) + ((child.position.y - end_node.position.y) ** 2)))
-            # child.h = 0
             child.f = child.g + child.h
 
-            # Child is already in the open list
-            # if len([open_node for open_node in open_list if child.position == open_node.position and child.h >= open_node.h]) > 0:
-            #     continue
-
-            # for i in range(len(open_list)):
-            #     open_node = open_list[i]
-            #     if child.position == open_node.position:
-            #         if child.parent is not None and open_node.parent is not None:
-            #             if (child.position - child.parent.position) == (open_node.position - open_node.parent.position) and child.h == open_node.h and child.h > 0.2:
-            #                 if child.g <= open_node.g:
-            #                     open_list[i] = child
-            #                     heapq.heapify(open_list)
-            #                     break
-            #                 else:
-            #                     # break
-            #                     pass
-            #         # if child.g <= open_node.g and child.h < open_node.h:
-            #         #     open_list[i] = child
-            #         #     heapq.heapify(open_list)
-            #         #     break
-            #         # if child.h > open_node.h:
-            #         #     break
-            #         # if child.g > open_node.g:
-            #         #     break
-            # else:
             # Add the child to the open list
             heapq.heappush(open_list, child)
 except KeyboardInterrupt:

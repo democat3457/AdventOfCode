@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import Generic, TypeVar
+
 # Credit for this: Nicholas Swift
 # as found at https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 from warnings import warn
@@ -5,12 +8,14 @@ import heapq
 
 __all__ = ["Node", "astar"]
 
-class Node:
+T = TypeVar("T")
+
+class Node(Generic[T]):
     """
     A node class for A* Pathfinding
     """
 
-    def __init__(self, parent=None, position=None):
+    def __init__(self, parent: Node[T]|None=None, position: T=None):
         self.parent = parent
         self.position = position
 
