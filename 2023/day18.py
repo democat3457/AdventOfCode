@@ -53,11 +53,6 @@ for line in lines:
         nodes.append(coor)
         total_nodes += val
 
-area = 0
-for i in range(len(nodes)):
-    area += nodes[i].x * (nodes[(i+1)%len(nodes)].y - nodes[(i-1)%len(nodes)].y)
-area //= 2
+area = int(shoelace(nodes))
 
-print(len(nodes))
-
-ans(total_nodes + (area - (total_nodes//2) + 1))
+ans(total_nodes + int(picks_internal(area, total_nodes)))

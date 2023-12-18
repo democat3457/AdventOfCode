@@ -1,5 +1,6 @@
 import copy
 import math
+from numbers import Number
 import re
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
@@ -51,6 +52,16 @@ def truthy_list(array: Iterable[T]) -> List[T]:
 
 def vec_add(t0: Tuple, t1: Tuple):
     return (t0[0]+t1[0], t0[1]+t1[1])
+
+def shoelace(nodes: list[Coor]):
+    area = 0
+    for i in range(len(nodes)):
+        area += nodes[i].x * (nodes[(i+1)%len(nodes)].y - nodes[(i-1)%len(nodes)].y)
+    area /= 2
+    return area
+
+def picks_internal(area: Number, num_of_nodes: Number):
+    return (area - (num_of_nodes/2) + 1)
 
 def ans(answer):
     print(answer)
