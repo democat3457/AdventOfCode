@@ -1,0 +1,14 @@
+# x start = 7282 (. on corner)
+# x not start = 7331
+# tl small = 950
+# tl big = 6386
+# bl small = 923
+# bl big = 6390
+# tr small = 941
+# tr big = 6388
+# br small = 925
+# br big = 6408
+# bm = 5516
+# rm = 5514
+# lm = 5494
+# tm = 5492
