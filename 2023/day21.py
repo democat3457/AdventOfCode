@@ -35,22 +35,7 @@ grid = Grid(lines)
 
 # Part 01
 # start = [c for c in grid if grid[c] == 'S'][0]
-start = Coor(130,130)
-
-# x start = 7282 (. on corner)
-# x not start = 7331
-# tl small = 950
-# tl big = 6386
-# bl small = 923
-# bl big = 6390
-# tr small = 941
-# tr big = 6388
-# br small = 925
-# br big = 6408
-# bm = 5516
-# rm = 5514
-# lm = 5494
-# tm = 5492
+start = Coor(65,65)
 
 """
 >>> x = 26501365-65
@@ -59,11 +44,11 @@ start = Coor(130,130)
 202300
 >>> pairs = x // 2
 >>> total = 0
->>> total += ((pairs * 2) ** 2) * 7331
->>> total += (((pairs * 2) - 1) ** 2) * 7282
->>> total += (x-1) * (6386+6390+6388+6408)
->>> total += 5516 + 5514 + 5494 + 5492
->>> total += x * (950+923+941+925)
+>>> total += ((pairs * 2) ** 2) * not_start
+>>> total += (((pairs * 2) - 1) ** 2) * start
+>>> total += (x-1) * (big_pieces)
+>>> total += middle_pieces
+>>> total += x * (small_pieces)
 >>> total
 <ans>
 """
