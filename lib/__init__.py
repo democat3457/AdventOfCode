@@ -14,6 +14,7 @@ import operator
 import pyperclip
 import requests
 from tqdm import tqdm
+from operator import itemgetter
 
 from . import astar
 from .coords import *
