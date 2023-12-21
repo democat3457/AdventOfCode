@@ -11,6 +11,8 @@ T = TypeVar('T')
 class Grid(Generic[T]):
     def __init__(self, lines: list[Iterable[T]]) -> None:
         self._lines = [list(a) for a in lines if a]
+        if any(len(l) != self.width for l in self._lines):
+            raise ValueError("Jagged array not supported in Grid")
 
     @property
     def lines(self):
@@ -111,6 +113,16 @@ class Grid(Generic[T]):
             elif isinstance(idx[0], slice):
                 return [ l[idx[1]] for l in self.lines[idx[0]] ]
         raise TypeError(f'Invalid grid index type {idx}')
+    
+    def __setitem__(self, idx, value):
+        if isinstance(idx, int):
+            self.lines[idx] = value
+        elif isinstance(idx, Coor):
+            self.lines[idx.x][idx.y] = value
+        elif isinstance(idx, tuple):
+            self.lines[idx[0]][idx[1]] = value
+        else:
+            raise TypeError(f'Cannot set index type {type(value)} of Grid')
 
     def __eq__(self, __value: object) -> bool:
         return self.lines == __value.lines
