@@ -121,6 +121,9 @@ class Vector2D(Generic[T]):
     
     def __eq__(self, other: Vector2D):
         return self.x == other.x and self.y == other.y
+    
+    def __hash__(self):
+        return hash(self.tup)
 
 @dataclass
 class Vec2D(Vector2D[float]):
