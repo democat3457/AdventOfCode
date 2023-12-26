@@ -66,6 +66,9 @@ def shoelace(nodes: list[Coor]):
 def picks_internal(area: Number, num_of_nodes: Number):
     return (area - (num_of_nodes/2) + 1)
 
+def flatten(ls: Iterable[Iterable[T]]) -> list[T]:
+    return [ item for item_list in ls for item in item_list ]
+
 def ans(answer):
     print(answer)
     pyperclip.copy(str(answer))
