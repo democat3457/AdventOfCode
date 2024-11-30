@@ -12,6 +12,13 @@ lines = puzzle_input.splitlines()
 # 20, 19, 15 @  1, -5, -3
 # """.splitlines()
 
+'''
+s = si + t*vs
+m = mi + t1*vm
+n = ni + t2*vn
+p = pi + t3*vp
+'''
+
 MIN_XY = 7
 MAX_XY = 27
 
@@ -26,7 +33,7 @@ for line in lines:
     if line:
         px,py,pz,vx,vy,vz = map(int, re.findall(r'(-?\d+)', line))
 
-        # if vx+vy == 0 or vy+vz == 0 or vx+vz == 0 or vx+vy+vz == 0:
+        # if vx+vy+vz == 0:
         #     print('hi!', vx,vy,vz)
         # continue
 
