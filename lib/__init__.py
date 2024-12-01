@@ -50,10 +50,10 @@ def get_element_in_arrays(array: Any, indices: Iterable[int], default: Any):
 
 T = TypeVar('T')
 
-def truthy_list(array: Iterable[T]) -> List[T]:
+def truthy_list(array: Iterable[T]) -> list[T]:
     return [a for a in array if a]
 
-def vec_add(t0: Tuple, t1: Tuple):
+def vec_add(t0: tuple, t1: tuple):
     return (t0[0]+t1[0], t0[1]+t1[1])
 
 def shoelace(nodes: list[Coor]):
