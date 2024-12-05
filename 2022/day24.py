@@ -73,7 +73,7 @@ def br():
         for position in current_pos_queue:
             visited_states.add((position, minute % len(blizzard_positions)))
             for m in search:
-                newpos = vec_add(position, m)
+                newpos = (position[0]+m[0], position[1]+m[1])
                 if newpos == ending_position:
                     return
                 if (newpos, (minute + 1) % len(blizzard_positions)) in visited_states:

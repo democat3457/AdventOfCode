@@ -56,9 +56,6 @@ def intlist(array: Iterable[T]) -> list[int]:
 def truthy_list(array: Iterable[T]) -> list[T]:
     return [a for a in array if a]
 
-def vec_add(t0: tuple, t1: tuple):
-    return (t0[0]+t1[0], t0[1]+t1[1])
-
 def shoelace(nodes: list[Coor]):
     area = 0
     for i in range(len(nodes)):
