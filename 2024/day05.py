@@ -47,7 +47,7 @@ for line in lines:
             rules[a][b] = 'lt'
             rules[b][a] = 'gt'
         else:
-            nums = list(map(int,line.split(",")))
+            nums = intlist(line.split(","))
             valid = True
             idx = 0
             for i, n in enumerate(nums):

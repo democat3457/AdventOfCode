@@ -50,6 +50,9 @@ def get_element_in_arrays(array: Any, indices: Iterable[int], default: Any):
 
 T = TypeVar('T')
 
+def intlist(array: Iterable[T]) -> list[int]:
+    return list(map(int, array))
+
 def truthy_list(array: Iterable[T]) -> list[T]:
     return [a for a in array if a]
 
