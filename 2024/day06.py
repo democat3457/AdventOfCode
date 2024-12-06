@@ -42,6 +42,19 @@ for c in grid:
 # quit()
 
 # Part 02 Smart? no worky
+# establish lines as soon as you get on there, and propagate the line backward to indicate possible avenues of looping
+# count how many times you intersect a line (that you've added thus far - ensures no loops cut off the source) going clockwise right
+# Sample Analysis:
+# ....#...|.
+# ---->>>>v#
+# ....^...v.
+# ..#.^...v.
+# -->>^>v#v.
+# ..^.^.v.v.
+# .#^<^<<<<-
+# .>|>^.v.#.
+# #^|<^<<---
+# ..|.|.#...
 # possible = set()
 # visited = set()
 # visited_rots = defaultdict(set)
