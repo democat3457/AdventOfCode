@@ -15,6 +15,8 @@ class Vector2D(Generic[T]):
 
     def __init_subclass__(cls) -> None:
         cls._type_T = get_args(cls.__orig_bases__[0])[0]
+        cls.__eq__ = Vector2D.__eq__
+        cls.__hash__ = Vector2D.__hash__
 
     @property
     def tup(self):
@@ -118,10 +120,10 @@ class Vector2D(Generic[T]):
 
     def __str__(self):
         return f"({self.x}, {self.y})"
-    
+
     def __eq__(self, other: Vector2D):
         return self.x == other.x and self.y == other.y
-    
+
     def __hash__(self):
         return hash(self.tup)
 
