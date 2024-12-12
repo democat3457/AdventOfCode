@@ -42,7 +42,7 @@ while len(unvisited):
             continue
         region.append(cc)
         unvisited.remove(cc)
-        for d in adj:
+        for d in Grid.adjacent:
             if cc+d in grid and grid[cc+d] == val:
                 q.append(cc+d)
 

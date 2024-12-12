@@ -15,6 +15,10 @@ class Grid(Generic[T]):
             raise ValueError("Jagged array not supported in Grid")
 
     @property
+    def adjacent():
+        return [ Coor(0,1), Coor(1,0), Coor(0,-1), Coor(-1,0) ]
+
+    @property
     def lines(self):
         return self._lines
 
@@ -113,7 +117,7 @@ class Grid(Generic[T]):
             elif isinstance(idx[0], slice):
                 return [ l[idx[1]] for l in self.lines[idx[0]] ]
         raise TypeError(f'Invalid grid index type {idx}')
-    
+
     def __setitem__(self, idx, value):
         if isinstance(idx, int):
             self.lines[idx] = value
