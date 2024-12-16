@@ -3,9 +3,9 @@ from lib import *
 year, day = 2024, 1
 
 puzzle_input = load(year, day)
-lines = puzzle_input.splitlines()
-# lines = """
-# """.splitlines()
+# puzzle_input = """
+# """
+lines = puzzle_input.strip().splitlines()
 
 total = 0
 

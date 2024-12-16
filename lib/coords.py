@@ -121,6 +121,10 @@ class Vector2D(Generic[T]):
     def __str__(self):
         return f"({self.x}, {self.y})"
 
+    def __lt__(self, other: Vector2D):
+        # arbitrary sorting for heapq, tuple-sorting algorithms
+        return self.x < other.x if self.x != other.x else self.y < other.y
+
     def __eq__(self, other: Vector2D):
         return self.x == other.x and self.y == other.y
 

@@ -14,7 +14,6 @@ class Grid(Generic[T]):
         if any(len(l) != self.width for l in self._lines):
             raise ValueError("Jagged array not supported in Grid")
 
-    @property
     def adjacent():
         return [ Coor(0,1), Coor(1,0), Coor(0,-1), Coor(-1,0) ]
 
@@ -94,6 +93,21 @@ class Grid(Generic[T]):
                 if isinstance(idx[1], int):
                     return 0 <= idx[1] < self.width
         raise TypeError(f'Invalid grid index type for {idx}')
+
+    def find(self, search: T) -> list[Coor]:
+        ret = []
+        for c in self:
+            if self[c] == search:
+                ret.append(c)
+        return ret
+
+    def find_all(self, search_items: Iterable[T]) -> list[list[Coor]]:
+        ret = [ list() for _ in range(len(search_items)) ]
+        for c in self:
+            for idx, search in enumerate(search_items):
+                if self[c] == search:
+                    ret[idx].append(c)
+        return ret
 
     def copy(self) -> Grid[T]:
         return Grid(self.lines)
