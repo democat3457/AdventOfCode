@@ -67,7 +67,37 @@ grid = Grid([ '.'*(SIZE+1) for _ in range(SIZE+1) ])
 #             heapq.heappush(q, (i+1, c+d))
 # quit()
 
-# Part 02
+# Part 02 brute force
+# obstacles = []
+# for i in tqdm(range(len(lines))):
+#     a,b = map(int, lines[i].split(','))
+#     obstacles.append(Coor(b,a))
+#     grid[b,a] = '#'
+
+#     start = Coor(0,0)
+#     end = Coor(SIZE, SIZE)
+
+#     q = [(0, start)]
+#     visited = set()
+#     heapq.heapify(q)
+#     while len(q):
+#         i, c = heapq.heappop(q)
+#         if c in visited:
+#             continue
+#         visited.add(c)
+#         if c == end:
+#             break
+#         for d in Grid.adjacent():
+#             if c+d in grid:
+#                 if grid[c+d] == '#':
+#                     continue
+#                 heapq.heappush(q, (i+1, c+d))
+#     else:
+#         ans(f'{a},{b}')
+#         break
+# quit()
+
+# Part 02 connected components
 obstacles = []
 nodes: dict[Coor, Node] = dict()
 
