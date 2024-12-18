@@ -16,6 +16,8 @@ class Grid(Generic[T]):
 
     def adjacent():
         return [ Coor(0,1), Coor(1,0), Coor(0,-1), Coor(-1,0) ]
+    def adjacent_diagonal():
+        return [ Coor(0,1), Coor(1,1), Coor(1,0), Coor(1,-1), Coor(0,-1), Coor(-1,-1), Coor(-1,0), Coor(-1,1) ]
 
     @property
     def lines(self):
