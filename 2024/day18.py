@@ -1,6 +1,5 @@
 from __future__ import annotations
 from lib import *
-import heapq
 
 year, day = 2024, 18
 

@@ -8,6 +8,7 @@ from numbers import Number
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
 
+import heapq
 import functools
 import itertools
 import numpy as np
