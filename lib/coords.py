@@ -21,10 +21,13 @@ class Vector2D(Generic[T]):
     @property
     def tup(self):
         return (self.x, self.y)
-    
+
     @classmethod
     def from_(cls, other: Vector2D):
         return cls(cls._type_T(other.x), cls._type_T(other.y))
+
+    def hypot(self) -> T:
+        return self._type_T(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other):
         xval = None

@@ -12,31 +12,34 @@ lines = puzzle_input.splitlines()
 # abdefghi
 # """.splitlines()
 
-grid = []
-starting = (0,0)
-ending = (0,0)
-
-for line in lines:
-    if line:
-        if "S" in line:
-            starting = (len(grid), line.index("S"))
-            line = line.replace("S", "a")
-        if "E" in line:
-            ending = (len(grid), line.index("E"))
-            line = line.replace("E", "z")
-        grid.append(list(line))
+grid = Grid(lines)
+[starting], [ending] = grid.find_all(("S", "E"))
+grid[starting] = "a"
+grid[ending] = "z"
 
 print(starting, ending)
 
-path = astar.astar(grid, starting, ending, False)
+def adjacent(curr: Coor, next: Coor):
+    current_value = ord(grid[curr])
+    if ord(grid[next]) > (current_value + 1):
+        # print(f'unwalkable {ord(grid[next])} > {current_value + 1}')
+        return False
+
+    # Redirect to faster upper path
+    if next == Coor(17, 68) or next == Coor(16, 87):
+        return False
+
+    return True
+
+path = astar.astar(grid, starting, ending, adjacency_check=adjacent)
 print(path)
-for i in range(len(grid)):
-    for j in range(len(grid[0])):
-        if (i,j) == starting:
-            grid[i][j] = "S"
-        elif (i,j) == ending:
-            grid[i][j] = "E"
-        elif (i,j) in path:
-            grid[i][j] = "O"
-print('\n'.join(map(lambda x: ''.join(x), grid)))
+
+for c in grid:
+    if c == starting:
+        grid[c] = "S"
+    elif c == ending:
+        grid[c] = "E"
+    elif c in path:
+        grid[c] = "O"
+print(grid)
 ans(len(path)-1)

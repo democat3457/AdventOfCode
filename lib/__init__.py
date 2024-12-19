@@ -21,9 +21,9 @@ import pyperclip
 import requests
 from tqdm import tqdm
 
-from . import astar
 from .coords import *
 from .grid import *
+from . import astar
 
 
 def load(year, day):

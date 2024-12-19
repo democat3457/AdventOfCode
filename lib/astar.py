@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import Generic, TypeVar
+from typing import Callable, Generic, TypeVar
 
 # Credit for this: Nicholas Swift
 # as found at https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 from warnings import warn
 import heapq
+
+from .coords import Coor
+from .grid import Grid
 
 __all__ = ["Node", "astar"]
 
@@ -23,21 +26,24 @@ class Node(Generic[T]):
         self.h = 0
         self.f = 0
 
-    def __eq__(self, other):
+    def __eq__(self, other: Node):
         return self.position == other.position
-    
+
+    def __hash__(self):
+        return hash(self.position)
+
     def __repr__(self):
       return f"{self.position} - g: {self.g} h: {self.h} f: {self.f}"
 
     # defining less than for purposes of heap queue
-    def __lt__(self, other):
+    def __lt__(self, other: Node):
       return self.f < other.f
-    
+
     # defining greater than for purposes of heap queue
-    def __gt__(self, other):
+    def __gt__(self, other: Node):
       return self.f > other.f
 
-def return_path(current_node):
+def return_path(current_node: Node[T]) -> list[T]:
     path = []
     current = current_node
     while current is not None:
@@ -46,13 +52,23 @@ def return_path(current_node):
     return path[::-1]  # Return reversed path
 
 
-def astar(maze, start, end, allow_diagonal_movement = False):
+def astar(
+    maze: Grid,
+    start: Coor,
+    end: Coor,
+    adjacency_check: Callable[[Coor, Coor], bool] = (lambda _,_a: True),
+    heuristic_func: Callable[[Coor, Coor], int] = (lambda x, y: (x - y).hypot()),
+    *,
+    check_diagonals: bool = False,
+) -> list[Coor] | None:
     """
-    Returns a list of tuples as a path from the given start to the given end in the given maze
-    :param maze:
-    :param start:
-    :param end:
-    :return:
+    Runs the A* path-planning algorithm on a given maze using the provided functions to customize its behavior.
+    :param maze:    The grid / maze
+    :param start:   The starting coordinate
+    :param end:     The ending coordinate
+    :param adjacency_check:     Returns whether a possible location is valid. First parameter is the current coordinate, second parameter is the tentative coordinate
+    :param heuristic_func:      Returns the heuristic value for a node. First parameter is the current coordinate, second parameter is the end coordinate. Return 0 for Djikstra's
+    :return:        None if a path cannot be found, or a list of coordinates as a path from start to end (inclusive) in the maze
     """
 
     # Create start and end node
@@ -62,8 +78,8 @@ def astar(maze, start, end, allow_diagonal_movement = False):
     end_node.g = end_node.h = end_node.f = 0
 
     # Initialize both open and closed list
-    open_list = []
-    closed_list = []
+    open_list: list[Node[Coor]] = []
+    closed_list: list[Node[Coor]] = []
 
     # Heapify the open_list and Add the start node
     heapq.heapify(open_list) 
@@ -71,23 +87,23 @@ def astar(maze, start, end, allow_diagonal_movement = False):
 
     # Adding a stop condition
     outer_iterations = 0
-    max_iterations = (len(maze[0]) * len(maze) * 3)
+    max_iterations = (maze.height * maze.width * 3)
 
     # what squares do we search
-    adjacent_squares = ((0, -1), (0, 1), (-1, 0), (1, 0),)
-    if allow_diagonal_movement:
-        adjacent_squares = ((0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1),)
+    adjacent_squares = Grid.adjacent()
+    if check_diagonals:
+        adjacent_squares = Grid.adjacent_diagonal()
 
     # Loop until you find the end
     while len(open_list) > 0:
         outer_iterations += 1
 
         if outer_iterations > max_iterations:
-          # if we hit this point return the path such as it is
-          # it will not contain the destination
-          warn("giving up on pathfinding too many iterations")
-          return return_path(current_node)       
-        
+            # if we hit this point return the path such as it is
+            # it will not contain the destination
+            warn("giving up on pathfinding too many iterations")
+            return return_path(current_node)       
+
         # Get the current node
         current_node = heapq.heappop(open_list)
         closed_list.append(current_node)
@@ -97,27 +113,21 @@ def astar(maze, start, end, allow_diagonal_movement = False):
             return return_path(current_node)
 
         # Generate children
-        children = []
+        children: list[Node[Coor]] = []
 
-        current_value = ord(maze[current_node.position[0]][current_node.position[1]])
-        
         for new_position in adjacent_squares: # Adjacent squares
 
             # Get node position
-            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
+            node_position = current_node.position + new_position
 
             # Make sure within range
-            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
+            if node_position not in maze:
                 # print('out range')
                 continue
 
             # Make sure walkable terrain
-            # if ord(maze[node_position[0]][node_position[1]]) > (current_value + 1):
-            #     # print(f'unwalkable {ord(maze[node_position[0]][node_position[1]])} > {current_value + 1}')
-            #     continue
-
-            # if node_position == (17, 68) or node_position == (16, 87):
-            #     continue
+            if not adjacency_check(current_node.position, node_position):
+                continue
 
             # Create new node
             new_node = Node(current_node, node_position)
@@ -128,17 +138,16 @@ def astar(maze, start, end, allow_diagonal_movement = False):
         # Loop through children
         for child in children:
             # Child is on the closed list
-            if len([closed_child for closed_child in closed_list if closed_child == child]) > 0:
+            if child in closed_list:
                 continue
 
             # Create the f, g, and h values
             child.g = current_node.g + 1
-            child.h = (((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2))
-            # child.h = 0
+            child.h = heuristic_func(child.position, end_node.position)
             child.f = child.g + child.h
 
             # Child is already in the open list
-            if len([open_node for open_node in open_list if child.position == open_node.position and child.g > open_node.g]) > 0:
+            if any(map(lambda open_node: child.position == open_node.position and child.g > open_node.g, open_list)):
                 continue
 
             # Add the child to the open list
