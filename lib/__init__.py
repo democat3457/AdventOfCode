@@ -11,12 +11,15 @@ from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
 import heapq
 import functools
 import itertools
-import numpy as np
 import operator
+from operator import itemgetter
+
+import more_itertools
+from more_itertools import split_at, substrings, collapse
+import numpy as np
 import pyperclip
 import requests
 from tqdm import tqdm
-from operator import itemgetter
 
 from . import astar
 from .coords import *
@@ -69,6 +72,9 @@ def picks_internal(area: Number, num_of_nodes: Number):
 
 def flatten(ls: Iterable[Iterable[T]]) -> list[T]:
     return [ item for item_list in ls for item in item_list ]
+
+def listsplit(iterable: Iterable[T], item: object, maxsplit: int = -1):
+    return split_at(iterable, lambda o: o == item, maxsplit=maxsplit)
 
 def ans(answer):
     print(answer)

@@ -15,9 +15,9 @@ puzzle_input = load(year, day)
 # brgr
 # bbrgwb
 # """
-patts, designs = puzzle_input.strip().split('\n\n')
+[patts], designs = listsplit(puzzle_input.strip().splitlines(), '')
 
-patts = patts.strip().split(', ')
+patts = patts.split(', ')
 
 @functools.lru_cache()
 def proc(design: str):
@@ -31,7 +31,7 @@ def proc(design: str):
 
 total = 0
 
-for line in tqdm(designs.splitlines()):
+for line in tqdm(designs):
     if line:
         # Part 01
         # if proc(line):

@@ -2,3 +2,4 @@ pyperclip
 numpy
 tqdm
 requests
+more-itertools
