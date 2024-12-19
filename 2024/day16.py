@@ -25,11 +25,7 @@ lines = puzzle_input.strip().splitlines()
 
 grid = Grid(lines)
 
-for c in grid:
-    if grid[c] == 'S':
-        start = c
-    elif grid[c] == 'E':
-        end = c
+[start], [end] = grid.find_all(('S', 'E'))
 
 # Part 01
 # q = [(0, start, Coor(0, 1))]
