@@ -15,7 +15,8 @@ puzzle_input = load(year, day)
 # brgr
 # bbrgwb
 # """
-[patts], designs = listsplit(puzzle_input.strip().splitlines(), '')
+lines = puzzle_input.strip().splitlines()
+[patts], designs = listsplit(lines, '')
 
 patts = patts.split(', ')
 
