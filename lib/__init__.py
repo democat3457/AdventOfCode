@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
 
 import heapq
+from heapq import heapify, heappop, heappush, heappushpop, heapreplace
 import functools
 import itertools
 import operator
