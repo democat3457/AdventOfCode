@@ -1,4 +1,5 @@
 from __future__ import annotations
+from dataclasses import dataclass
 from typing import Callable, Generic, TypeVar
 
 # Credit for this: Nicholas Swift
@@ -8,8 +9,6 @@ import heapq
 
 from .coords import Coor
 from .grid import Grid
-
-__all__ = ["Node", "astar"]
 
 T = TypeVar("T")
 
@@ -46,7 +45,7 @@ class Node(Generic[T]):
     def __gt__(self, other: Node):
       return self.f > other.f
 
-def return_path(current_node: Node[T]) -> list[T]:
+def _return_path(current_node: Node[T]) -> list[T]:
     path = []
     current = current_node
     while current is not None:
@@ -55,24 +54,66 @@ def return_path(current_node: Node[T]) -> list[T]:
     return path[::-1]  # Return reversed path
 
 
+@dataclass
+class MazeState(Generic[T]):
+    cur_pos: Coor
+    cur_val: T
+    adj_pos: Coor
+    adj_val: T
+    start_pos: Coor
+    start_val: T
+    end_pos: Coor
+    end_val: T
+
+
+def adj_valid_if_not(obstacle: T):
+    def is_adj_valid(maze_state: MazeState[T]):
+        return maze_state.adj_val != obstacle
+    return is_adj_valid
+
+def heur_dijkstras():
+    def heuristic_func(adj_coor: Coor, end_coor: Coor):
+        return 0
+    return heuristic_func
+
+def heur_hypot():
+    def heuristic_func(adj_coor: Coor, end_coor: Coor):
+        return (end_coor - adj_coor).hypot()
+    return heuristic_func
+
+def heur_manhattan():
+    def heuristic_func(adj_coor: Coor, end_coor: Coor):
+        diff = abs(end_coor - adj_coor)
+        return diff.x + diff.y
+    return heuristic_func
+
+
 def astar(
-    maze: Grid,
+    maze: Grid[T],
     start: Coor,
     end: Coor,
-    is_adj_valid: Callable[[Coor, Coor], bool] = (lambda _,_a: True),
-    heuristic_func: Callable[[Coor, Coor], int] = (lambda x, y: (x - y).hypot()),
+    is_adj_valid: Callable[[MazeState[T]], bool],
+    edge_weight: Callable[[MazeState[T]], float] = (lambda state: 1),
+    heuristic_func: Callable[[Coor, Coor], float] = heur_manhattan(),
     *,
     check_diagonals: bool = False,
+    max_iters_func: Callable[[Grid[T]], int] = (lambda grid: grid.height * grid.width * 3),
 ) -> list[Coor] | None:
     """
     Runs the A* path-planning algorithm on a given maze using the provided functions to customize its behavior.
     :param maze:    The grid / maze
     :param start:   The starting coordinate
     :param end:     The ending coordinate
-    :param is_adj_valid:     Returns whether a possible location is valid. First parameter is the current coordinate, second parameter is the tentative coordinate
-    :param heuristic_func:      Returns the heuristic value for a node. First parameter is the current coordinate, second parameter is the end coordinate. Return 0 for Djikstra's
+    :param is_adj_valid:    Returns whether an adjacent coordinate is valid. Parameters are (maze state)
+    :param edge_weight:     Returns the edge weight to add to an adjacent node. Parameters are (maze state)
+    :param heuristic_func:  Returns the heuristic value for an adjacent node. Parameters are (adjacent coordinate, end coordinate)
+    :param check_diagonals: Whether to additionally traverse adjacent diagonals to a coordinate
+    :param max_iters_func:  Returns the maximum possible number of algorithm iterations before concluding no path found
     :return:        None if a path cannot be found, or a list of coordinates as a path from start to end (inclusive) in the maze
     """
+
+    def _create_maze_state(cur_pos, adj_pos):
+        return MazeState(cur_pos, maze[cur_pos], adj_pos, maze[adj_pos], start, maze[start], end, maze[end])
 
     # Create start and end node
     start_node = Node(None, start)
@@ -88,7 +129,7 @@ def astar(
 
     # Adding a stop condition
     outer_iterations = 0
-    max_iterations = (maze.height * maze.width * 3)
+    max_iterations = max_iters_func(maze)
 
     # what squares do we search
     adjacent_squares = Grid.adjacent()
@@ -103,7 +144,7 @@ def astar(
             # if we hit this point return the path as it is
             # it will not contain the destination
             warn("giving up on pathfinding too many iterations")
-            return return_path(current_node)       
+            return _return_path(current_node)       
 
         # Get the current node
         current_node = heapq.heappop(open_list)
@@ -116,7 +157,7 @@ def astar(
 
         # Found the goal
         if current_pos == end:
-            return return_path(current_node)
+            return _return_path(current_node)
 
         # Loop over adjacent squares and add new nodes to the queue
         for new_position in adjacent_squares:
@@ -126,23 +167,29 @@ def astar(
 
             # Make sure within range
             if node_position not in maze:
-                # print('out range')
                 continue
 
             # Make sure child has not been visited yet
             if node_position in closed_list:
                 continue
 
+            # Create maze state
+            maze_state = _create_maze_state(current_pos, node_position)
+
             # Make sure walkable terrain
-            if not is_adj_valid(current_pos, node_position):
+            if not is_adj_valid(maze_state):
                 continue
 
             # Create new node
             child = Node(current_node, node_position)
 
             # Create the g and h values
-            child.g = current_node.g + 1
+            child.g = current_node.g + edge_weight(maze_state)
             child.h = heuristic_func(node_position, end)
+
+            # Child is already in the open list
+            if any(map(lambda open_node: child.position == open_node.position and child.g > open_node.g, open_list)):
+                continue
 
             # Add the child to the open list
             heapq.heappush(open_list, child)

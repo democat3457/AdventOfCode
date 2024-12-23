@@ -39,18 +39,18 @@ SIZE = 70
 grid = Grid([ '.'*(SIZE+1) for _ in range(SIZE+1) ])
 
 # Part 01
-# obstacles = []
-# for i in range(1024):
-#     a,b = map(int, lines[i].split(','))
-#     obstacles.append(Coor(b,a))
-#     grid[b,a] = '#'
+obstacles = []
+for i in range(1024):
+    a,b = map(int, lines[i].split(','))
+    obstacles.append(Coor(b,a))
+    grid[b,a] = '#'
 
-# start = Coor(0,0)
-# end = Coor(SIZE, SIZE)
+start = Coor(0,0)
+end = Coor(SIZE, SIZE)
 
-# path = astar.astar(grid, start, end, is_adj_valid=lambda cur,nex: grid[nex] != '#')
-# ans(len(path)-1)
-# quit()
+path = astar.astar(grid, start, end, is_adj_valid=astar.adj_valid_if_not('#'))
+ans(len(path)-1)
+quit()
 
 # Part 02 brute force
 # obstacles = []
