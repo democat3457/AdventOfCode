@@ -48,22 +48,8 @@ grid = Grid([ '.'*(SIZE+1) for _ in range(SIZE+1) ])
 # start = Coor(0,0)
 # end = Coor(SIZE, SIZE)
 
-# q = [(0, start)]
-# visited = set()
-# heapq.heapify(q)
-# while len(q):
-#     i, c = heapq.heappop(q)
-#     if c in visited:
-#         continue
-#     visited.add(c)
-#     if c == end:
-#         ans(i)
-#         break
-#     for d in Grid.adjacent():
-#         if c+d in grid:
-#             if grid[c+d] == '#':
-#                 continue
-#             heapq.heappush(q, (i+1, c+d))
+# path = astar.astar(grid, start, end, is_adj_valid=lambda cur,nex: grid[nex] != '#')
+# ans(len(path)-1)
 # quit()
 
 # Part 02 brute force

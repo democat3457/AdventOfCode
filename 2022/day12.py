@@ -31,7 +31,7 @@ def adjacent(curr: Coor, next: Coor):
 
     return True
 
-path = astar.astar(grid, starting, ending, adjacency_check=adjacent)
+path = astar.astar(grid, starting, ending, is_adj_valid=adjacent)
 print(path)
 
 for c in grid:
