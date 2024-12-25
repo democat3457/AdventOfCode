@@ -13,6 +13,10 @@ class Grid(Generic[T]):
         self._lines = [list(a) for a in lines if a]
         if any(len(l) != self.width for l in self._lines):
             raise ValueError("Jagged array not supported in Grid")
+    
+    @classmethod
+    def filled(cls, width: int, height: int, fill_value: T):
+        return cls([ [fill_value] * width for _ in range(height) ])
 
     def adjacent():
         return [ Coor(0,1), Coor(1,0), Coor(0,-1), Coor(-1,0) ]
